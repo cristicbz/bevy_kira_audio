@@ -4,10 +4,6 @@ use anyhow::Result;
 use bevy::asset::{AssetLoader, LoadContext, LoadedAsset};
 #[cfg(feature = "ogg")]
 use bevy::utils::BoxedFuture;
-#[cfg(feature = "ogg")]
-use kira::sound::{Sound, SoundSettings};
-#[cfg(feature = "ogg")]
-use std::io::Cursor;
 
 #[cfg(feature = "ogg")]
 use crate::source::AudioSource;
@@ -23,8 +19,7 @@ impl AssetLoader for OggLoader {
         load_context: &'a mut LoadContext,
     ) -> BoxedFuture<'a, Result<()>> {
         Box::pin(async move {
-            let sound = Sound::from_ogg_reader(Cursor::new(bytes), SoundSettings::default())?;
-            load_context.set_default_asset(LoadedAsset::new(AudioSource { sound }));
+            load_context.set_default_asset(LoadedAsset::new(AudioSource::read_ogg_bytes(bytes)?));
             Ok(())
         })
     }

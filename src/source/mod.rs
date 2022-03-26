@@ -19,3 +19,16 @@ pub use wav_loader::WavLoader;
 pub struct AudioSource {
     pub(crate) sound: Sound,
 }
+
+impl AudioSource {
+    /// Creates an `AudioSource` from a byte buffer containing the contents of an OGG file.
+    #[cfg(feature = "ogg")]
+    pub fn read_ogg_bytes(bytes: &[u8]) -> anyhow::Result<Self> {
+        use kira::sound::SoundSettings;
+        use std::io::Cursor;
+
+        Ok(Self {
+            sound: Sound::from_ogg_reader(Cursor::new(bytes), SoundSettings::default())?,
+        })
+    }
+}
